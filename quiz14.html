@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulazione Concorso Operatore Socio Sanitario - Modulo 37</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            margin: 0;
+            padding: 20px;
+            color: #f0f0f0;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700;
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700; }
+            to { text-shadow: 0 0 20px #ffd700, 0 0 30px #ffd700; }
+        }
+
+        #timer {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.5em;
+            color: #00eaff;
+            text-shadow: 0 0 5px #00eaff;
+        }
+
+        .question-nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .question-box {
+            width: 40px;
+            height: 40px;
+            margin: 8px;
+            background: linear-gradient(45deg, #333, #555);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .question-box:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px #ffd700;
+        }
+
+        .question-box.answered {
+            background: linear-gradient(45deg, #ffd700, #ffaa00);
+            box-shadow: 0 0 15px #ffd700;
+        }
+
+        .question {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question.active {
+            display: block;
+        }
+
+        .question h3 {
+            margin: 0 0 15px 0;
+            color: #ffffff;
+            font-size: 1.6em;
+            text-shadow: 0 0 3px rgba(255, 255, 255, 0.5);
+            line-height: 1.4;
+        }
+
+        .option {
+            margin: 10px 0;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            color: #ffffff;
+            font-size: 1.2em;
+            font-weight: 500;
+        }
+
+        .option:hover {
+            background: rgba(255, 255, 255, 0.35);
+            transform: translateX(5px);
+        }
+
+        .option.correct {
+            background: linear-gradient(90deg, #00eaff, #00b8d4);
+            color: #fff;
+            box-shadow: 0 0 15px #00eaff;
+        }
+
+        .option.wrong {
+            background: linear-gradient(90deg, #ff5252, #d81b60);
+            color: #fff;
+            box-shadow: 0 0 15px #ff5252;
+        }
+
+        .lamp {
+            display: none;
+            margin-left: 15px;
+            cursor: pointer;
+            font-size: 1.5em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700;
+            transition: transform 0.3s ease;
+        }
+
+        .lamp:hover {
+            transform: scale(1.2);
+        }
+
+        .explanation {
+            margin-top: 15px;
+            font-style: italic;
+            color: #f0f0f0;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+            animation: slideIn 0.5s ease;
+            font-size: 1.1em;
+            line-height: 1.5;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+
+        .nav-button {
+            padding: 12px 25px;
+            background: linear-gradient(45deg, #ffd700, #ffaa00);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.2em;
+            box-shadow: 0 0 10px #ffd700;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .nav-button:disabled {
+            background: #666;
+            color: #ccc;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        .nav-button:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px #ffd700;
+        }
+
+        button#submit {
+            display: block;
+            width: 250px;
+            margin: 20px auto;
+            padding: 15px;
+            background: linear-gradient(45deg, #00eaff, #00b8d4);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.3em;
+            box-shadow: 0 0 15px #00eaff;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        button#submit:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px #00eaff;
+        }
+
+        #result {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.8em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Simulazione Concorso Operatore Socio Sanitario - Modulo 37</h1>
+        <div class="question-nav" id="questionNav"></div>
+        <div id="timer">Tempo rimanente: <span id="time">30:00</span></div>
+        <div id="quiz"></div>
+        <div class="navigation">
+            <button class="nav-button" id="prev" disabled>⬅ Indietro</button>
+            <button class="nav-button" id="next">Avanti ➡</button>
+        </div>
+        <button id="submit">Invia Risposte</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Array di domande (1081-1110) con opzioni disposte casualmente
+        const questions = [
+            {
+                question: "Cos’è il diabete mellito?",
+                options: ["Un accumulo di liquido nel pancreas", "Una malattia metabolica con iperglicemia", "Un’infezione endocrina"],
+                correct: "Una malattia metabolica con iperglicemia",
+                explanation: "Il diabete mellito è una malattia metabolica caratterizzata da iperglicemia cronica, dovuta a deficit di insulina (tipo 1) o resistenza insulinica (tipo 2). Non è un’infezione né un accumulo di liquido. Gli OSS devono monitorare la glicemia, garantire una dieta equilibrata, assistere nella somministrazione di insulina e segnalare sintomi come poliuria o ipoglicemia."
+            },
+            {
+                question: "Quale è un segno tipico del diabete mellito non controllato?",
+                options: ["Ittero", "Polidipsia", "Oliguria"],
+                correct: "Polidipsia",
+                explanation: "La polidipsia, ovvero sete eccessiva, è un segno tipico del diabete mellito non controllato, accompagnata da poliuria e stanchezza. L’oliguria (ridotta produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare l’idratazione, monitorare la glicemia, garantire l’assunzione di liquidi e segnalare all’infermiere sintomi come confusione o chetoacidosi."
+            },
+            {
+                question: "Cos’è l’ipoglicemia?",
+                options: ["Un accumulo di glucosio nel sangue", "Una riduzione critica della glicemia", "Un’infezione pancreatica"],
+                correct: "Una riduzione critica della glicemia",
+                explanation: "L’ipoglicemia è una riduzione critica della glicemia (<70 mg/dL), spesso dovuta a sovradosaggio di insulina o digiuno. Provoca sudorazione, tremori e confusione. Non è un’infezione né un accumulo di glucosio. Gli OSS devono somministrare zuccheri semplici, monitorare la glicemia, garantire la sicurezza e segnalare sintomi come perdita di coscienza o convulsioni."
+            },
+            {
+                question: "Quale è un segno tipico dell’ipoglicemia?",
+                options: ["Poliuria", "Sudorazione e tremori", "Ittero"],
+                correct: "Sudorazione e tremori",
+                explanation: "La sudorazione e i tremori, spesso accompagnati da ansia o confusione, sono segni tipici dell’ipoglicemia, dovuti alla bassa glicemia. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare i sintomi, somministrare zuccheri, monitorare la glicemia e segnalare all’infermiere sintomi come letargia o convulsioni."
+            },
+            {
+                question: "Cos’è l’iperglicemia?",
+                options: ["Un’infezione endocrina", "Un aumento critico della glicemia", "Un accumulo di liquido nel pancreas"],
+                correct: "Un aumento critico della glicemia",
+                explanation: "L’iperglicemia è un aumento critico della glicemia (>180 mg/dL), spesso dovuta a diabete non controllato o stress. Provoca poliuria, polidipsia e stanchezza. Non è un’infezione né un accumulo di liquido. Gli OSS devono monitorare la glicemia, garantire l’idratazione, assistere nella somministrazione di insulina e segnalare sintomi come dispnea o chetoacidosi."
+            },
+            {
+                question: "Quale è un segno tipico dell’iperglicemia grave?",
+                options: ["Ittero", "Respiro di Kussmaul", "Oliguria"],
+                correct: "Respiro di Kussmaul",
+                explanation: "Il respiro di Kussmaul, rapido e profondo, è un segno tipico dell’iperglicemia grave, associato a chetoacidosi diabetica. L’oliguria (ridotta produzione di urina) può essere secondaria, mentre l’ittero (colorazione giallastra della pelle) non è correlato. Gli OSS devono osservare la respirazione, monitorare la glicemia, garantire l’idratazione e segnalare all’infermiere sintomi come confusione o vomito."
+            },
+            {
+                question: "Cos’è l’ipotiroidismo?",
+                options: ["Un accumulo di liquido nella tiroide", "Una riduzione della funzione tiroidea", "Un’infezione endocrina"],
+                correct: "Una riduzione della funzione tiroidea",
+                explanation: "L’ipotiroidismo è una riduzione della funzione tiroidea, che causa stanchezza, aumento di peso, intolleranza al freddo e pelle secca. Non è un’infezione né un accumulo di liquido. Gli OSS devono monitorare i sintomi, garantire il comfort, assistere nella somministrazione di levotiroxina e segnalare sintomi come bradicardia o letargia."
+            },
+            {
+                question: "Quale è un segno tipico dell’ipotiroidismo?",
+                options: ["Poliuria", "Stanchezza cronica", "Ittero"],
+                correct: "Stanchezza cronica",
+                explanation: "La stanchezza cronica, spesso accompagnata da aumento di peso e intolleranza al freddo, è un segno tipico dell’ipotiroidismo, dovuto al rallentamento metabolico. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare i sintomi, monitorare i parametri vitali, garantire il comfort e segnalare all’infermiere sintomi come edema o depressione."
+            },
+            {
+                question: "Cos’è l’ipertiroidismo?",
+                options: ["Un’infezione della tiroide", "Un aumento della funzione tiroidea", "Un accumulo di liquido nella tiroide"],
+                correct: "Un aumento della funzione tiroidea",
+                explanation: "L’ipertiroidismo è un aumento della funzione tiroidea, che causa perdita di peso, tachicardia, intolleranza al caldo e tremori. Non è un’infezione né un accumulo di liquido. Gli OSS devono monitorare i parametri vitali, garantire un ambiente fresco, assistere nella somministrazione di farmaci e segnalare sintomi come palpitazioni o esoftalmo."
+            },
+            {
+                question: "Quale è un segno tipico dell’ipertiroidismo?",
+                options: ["Ittero", "Tachicardia", "Oliguria"],
+                correct: "Tachicardia",
+                explanation: "La tachicardia, spesso accompagnata da perdita di peso e tremori, è un segno tipico dell’ipertiroidismo, dovuto all’aumento del metabolismo. L’oliguria (ridotta produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono monitorare il polso, garantire il comfort, osservare i sintomi e segnalare all’infermiere sintomi come agitazione o esoftalmo."
+            },
+            {
+                question: "Cos’è il morbo di Cushing?",
+                options: ["Un accumulo di liquido surrenalico", "Un eccesso di cortisolo", "Un’infezione endocrina"],
+                correct: "Un eccesso di cortisolo",
+                explanation: "Il morbo di Cushing è un eccesso di cortisolo, spesso dovuto a tumori ipofisari o surrenalici, che causa aumento di peso, faccia a luna piena e strie cutanee. Non è un’infezione né un accumulo di liquido. Gli OSS devono monitorare i sintomi, garantire una dieta equilibrata, osservare la cute e segnalare sintomi come ipertensione o osteoporosi."
+            },
+            {
+                question: "Quale è un segno tipico del morbo di Cushing?",
+                options: ["Poliuria", "Faccia a luna piena", "Ittero"],
+                correct: "Faccia a luna piena",
+                explanation: "La faccia a luna piena, accompagnata da aumento di peso e strie cutanee, è un segno tipico del morbo di Cushing, dovuto all’eccesso di cortisolo. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare i cambiamenti fisici, monitorare i parametri vitali, garantire il comfort e segnalare all’infermiere sintomi come fragilità ossea o ipertensione."
+            },
+            {
+                question: "Cos’è il morbo di Addison?",
+                options: ["Un’infezione surrenalica", "Una carenza di cortisolo e aldosterone", "Un accumulo di liquido nei surreni"],
+                correct: "Una carenza di cortisolo e aldosterone",
+                explanation: "Il morbo di Addison è una carenza di cortisolo e aldosterone, spesso autoimmune, che causa stanchezza, ipotensione e iperpigmentazione cutanea. Non è un’infezione né un accumulo di liquido. Gli OSS devono monitorare i parametri vitali, garantire l’assunzione di farmaci, osservare i sintomi e segnalare segni come ipotensione o crisi surrenalica."
+            },
+            {
+                question: "Quale è un segno tipico del morbo di Addison?",
+                options: ["Ittero", "Iperpigmentazione cutanea", "Oliguria"],
+                correct: "Iperpigmentazione cutanea",
+                explanation: "L’iperpigmentazione cutanea, spesso accompagnata da stanchezza e ipotensione, è un segno tipico del morbo di Addison, dovuto alla carenza di cortisolo. L’oliguria (ridotta produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare la cute, monitorare la pressione arteriosa, garantire il comfort e segnalare all’infermiere sintomi come vertigini o crisi surrenalica."
+            },
+            {
+                question: "Cos’è l’iperparatiroidismo?",
+                options: ["Un accumulo di liquido nelle paratiroidi", "Un eccesso di paratormone", "Un’infezione paratiroidea"],
+                correct: "Un eccesso di paratormone",
+                explanation: "L’iperparatiroidismo è un eccesso di paratormone, spesso dovuto a un adenoma paratiroideo, che causa ipercalcemia, osteoporosi e calcoli renali. Non è un’infezione né un accumulo di liquido. Gli OSS devono monitorare i sintomi, garantire l’idratazione, osservare i parametri vitali e segnalare sintomi come stanchezza o aritmie."
+            },
+            {
+                question: "Quale è un segno tipico dell’iperparatiroidismo?",
+                options: ["Poliuria", "Ipercalcemia", "Ittero"],
+                correct: "Ipercalcemia",
+                explanation: "L’ipercalcemia, spesso accompagnata da stanchezza, poliuria o calcoli renali, è un segno tipico dell’iperparatiroidismo, dovuto all’eccesso di paratormone. L’ittero (colorazione giallastra della pelle) non è correlato. Gli OSS devono osservare i sintomi, garantire l’idratazione, monitorare la diuresi e segnalare all’infermiere sintomi come confusione o aritmie."
+            },
+            {
+                question: "Cos’è l’ipoparatiroidismo?",
+                options: ["Un’infezione paratiroidea", "Una carenza di paratormone", "Un accumulo di liquido nelle paratiroidi"],
+                correct: "Una carenza di paratormone",
+                explanation: "L’ipoparatiroidismo è una carenza di paratormone, spesso dovuta a chirurgia tiroidea, che causa ipocalcemia, tetania e spasmi muscolari. Non è un’infezione né un accumulo di liquido. Gli OSS devono monitorare i sintomi, garantire l’assunzione di calcio, osservare i parametri vitali e segnalare segni come spasmi o aritmie."
+            },
+            {
+                question: "Quale è un segno tipico dell’ipoparatiroidismo?",
+                options: ["Ittero", "Tetania", "Oliguria"],
+                correct: "Tetania",
+                explanation: "La tetania, ovvero spasmi muscolari dolorosi, è un segno tipico dell’ipoparatiroidismo, dovuto all’ipocalcemia. L’oliguria (ridotta produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare i sintomi muscolari, monitorare il calcio, garantire il comfort e segnalare all’infermiere sintomi come convulsioni o aritmie."
+            },
+            {
+                question: "Cos’è l’acromegalia?",
+                options: ["Un accumulo di liquido nell’ipofisi", "Un eccesso di ormone della crescita", "Un’infezione endocrina"],
+                correct: "Un eccesso di ormone della crescita",
+                explanation: "L’acromegalia è un eccesso di ormone della crescita, spesso dovuto a un adenoma ipofisario, che causa ingrossamento delle estremità, ipertensione e diabete. Non è un’infezione né un accumulo di liquido. Gli OSS devono monitorare i sintomi, osservare i cambiamenti fisici, garantire il comfort e segnalare sintomi come cefalea o disturbi visivi."
+            },
+            {
+                question: "Quale è un segno tipico dell’acromegalia?",
+                options: ["Poliuria", "Ingrossamento delle mani", "Ittero"],
+                correct: "Ingrossamento delle mani",
+                explanation: "L’ingrossamento delle mani, spesso accompagnato da ingrossamento del viso e ipertensione, è un segno tipico dell’acromegalia, dovuto all’eccesso di ormone della crescita. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare i cambiamenti fisici, monitorare i parametri vitali, garantire il comfort e segnalare all’infermiere sintomi come visione offuscata o diabete."
+            },
+            {
+                question: "Cos’è il diabete insipido?",
+                options: ["Un’infezione renale", "Una carenza di vasopressina", "Un accumulo di glucosio nei reni"],
+                correct: "Una carenza di vasopressina",
+                explanation: "Il diabete insipido è una carenza di vasopressina (o resistenza ad essa), che causa poliuria e polidipsia senza iperglicemia. Non è un’infezione né un accumulo di glucosio. Gli OSS devono monitorare la diuresi, garantire l’idratazione, assistere nella somministrazione di desmopressina e segnalare sintomi come disidratazione o confusione."
+            },
+            {
+                question: "Quale è un segno tipico del diabete insipido?",
+                options: ["Ittero", "Poliuria intensa", "Oliguria"],
+                correct: "Poliuria intensa",
+                explanation: "La poliuria intensa, spesso accompagnata da polidipsia, è un segno tipico del diabete insipido, dovuto alla mancata concentrazione delle urine. L’oliguria (ridotta produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare l’idratazione, monitorare la diuresi, garantire liquidi e segnalare all’infermiere sintomi come ipotensione o sete estrema."
+            },
+            {
+                question: "Cos’è la chetoacidosi diabetica?",
+                options: ["Un accumulo di liquido nel pancreas", "Un’emergenza metabolica con acidosi", "Un’infezione endocrina"],
+                correct: "Un’emergenza metabolica con acidosi",
+                explanation: "La chetoacidosi diabetica è un’emergenza metabolica caratterizzata da iperglicemia, acidosi e produzione di chetoni, spesso in diabete di tipo 1. Provoca respiro di Kussmaul, confusione e disidratazione. Non è un’infezione né un accumulo di liquido. Gli OSS devono monitorare i parametri vitali, garantire l’idratazione, osservare i sintomi e segnalare segni come vomito o letargia."
+            },
+            {
+                question: "Quale è un segno tipico della chetoacidosi diabetica?",
+                options: ["Poliuria", "Alito fruttato", "Ittero"],
+                correct: "Alito fruttato",
+                explanation: "L’alito fruttato, dovuto alla produzione di chetoni, è un segno tipico della chetoacidosi diabetica, accompagnato da respiro di Kussmaul e confusione. La poliuria (aumento della produzione di urina) è presente ma meno specifica, mentre l’ittero (colorazione giallastra della pelle) non è correlato. Gli OSS devono osservare l’alito, monitorare la glicemia, garantire il comfort e segnalare all’infermiere sintomi come dispnea o coma."
+            },
+            {
+                question: "Cos’è l’iperosmolare iperglicemico non chetosico?",
+                options: ["Un’infezione pancreatica", "Un’emergenza con iperglicemia estrema", "Un accumulo di liquido nei reni"],
+                correct: "Un’emergenza con iperglicemia estrema",
+                explanation: "L’iperosmolare iperglicemico non chetosico è un’emergenza con iperglicemia estrema, disidratazione e alterazioni neurologiche, tipica del diabete di tipo 2. Non è un’infezione né un accumulo di liquido. Gli OSS devono monitorare la glicemia, garantire l’idratazione, osservare lo stato di coscienza e segnalare sintomi come confusione o convulsioni."
+            },
+            {
+                question: "Quale è un segno tipico dell’iperosmolare iperglicemico non chetosico?",
+                options: ["Ittero", "Confusione mentale", "Oliguria"],
+                correct: "Confusione mentale",
+                explanation: "La confusione mentale, spesso accompagnata da disidratazione e debolezza, è un segno tipico dell’iperosmolare iperglicemico non chetosico, dovuto all’iperglicemia estrema. L’oliguria (ridotta produzione di urina) può essere secondaria, mentre l’ittero (colorazione giallastra della pelle) non è correlato. Gli OSS devono osservare lo stato neurologico, monitorare la glicemia, garantire liquidi e segnalare all’infermiere sintomi come coma o ipotensione."
+            },
+            {
+                question: "Cos’è l’ipogonadismo?",
+                options: ["Un accumulo di liquido nei testicoli", "Una carenza di ormoni sessuali", "Un’infezione endocrina"],
+                correct: "Una carenza di ormoni sessuali",
+                explanation: "L’ipogonadismo è una carenza di ormoni sessuali (testosterone o estrogeni), che causa stanchezza, riduzione della libido e osteoporosi. Non è un’infezione né un accumulo di liquido. Gli OSS devono monitorare i sintomi, garantire il comfort, assistere nella somministrazione di ormoni e segnalare sintomi come depressione o fragilità ossea."
+            },
+            {
+                question: "Quale è un segno tipico dell’ipogonadismo maschile?",
+                options: ["Poliuria", "Riduzione della libido", "Ittero"],
+                correct: "Riduzione della libido",
+                explanation: "La riduzione della libido, spesso accompagnata da stanchezza e perdita di massa muscolare, è un segno tipico dell’ipogonadismo maschile, dovuto alla carenza di testosterone. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare i sintomi, garantire il comfort, monitorare i parametri vitali e segnalare all’infermiere sintomi come ginecomastia o osteoporosi."
+            },
+            {
+                question: "Cos’è la glicemia capillare?",
+                options: ["Un accumulo di liquido nel sangue", "La misurazione del glucosio nel sangue capillare", "Un’infezione del pancreas"],
+                correct: "La misurazione del glucosio nel sangue capillare",
+                explanation: "La glicemia capillare è la misurazione del glucosio nel sangue capillare, spesso utilizzata per monitorare il diabete. Non è un’infezione né un accumulo di liquido. Gli OSS devono eseguire correttamente la misurazione, garantire l’igiene, monitorare i valori e segnalare all’infermiere glicemie anomale o sintomi associati."
+            },
+            {
+                question: "Quale è una precauzione per misurare la glicemia capillare?",
+                options: ["Ittero", "Disinfezione del sito di puntura", "Oliguria"],
+                correct: "Disinfezione del sito di puntura",
+                explanation: "La disinfezione del sito di puntura è una precauzione fondamentale per misurare la glicemia capillare, per prevenire infezioni. L’oliguria (ridotta produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono utilizzare dispositivi sterili, garantire l’igiene, monitorare il sito di puntura e segnalare all’infermiere sintomi come arrossamento o infezioni."
+            },
+            {
+                question: "Cos’è la crisi surrenalica?",
+                options: ["Un accumulo di liquido nei surreni", "Un’emergenza da carenza acuta di cortisolo", "Un’infezione surrenalica"],
+                correct: "Un’emergenza da carenza acuta di cortisolo",
+                explanation: "La crisi surrenalica è un’emergenza causata da una carenza acuta di cortisolo, spesso in pazienti con morbo di Addison, che provoca ipotensione, confusione e shock. Non è un’infezione né un accumulo di liquido. Gli OSS devono monitorare i parametri vitali, garantire l’idratazione, assistere nella somministrazione di corticosteroidi e segnalare sintomi come letargia o collasso."
+            },
+            {
+                question: "Quale è un segno tipico della crisi surrenalica?",
+                options: ["Poliuria", "Ipotensione severa", "Ittero"],
+                correct: "Ipotensione severa",
+                explanation: "L’ipotensione severa, spesso accompagnata da confusione e stanchezza estrema, è un segno tipico della crisi surrenalica, dovuta alla carenza di cortisolo. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono monitorare la pressione arteriosa, garantire il comfort, osservare i sintomi e segnalare all’infermiere sintomi come sincope o shock."
+            }
+        ];
+
+        let currentQuestion = 0;
+
+        // Carica i quadratini di navigazione
+        function loadQuestionNav() {
+            const navDiv = document.getElementById("questionNav");
+            questions.forEach((_, index) => {
+                const box = document.createElement("div");
+                box.classList.add("question-box");
+                box.textContent = index + 1;
+                box.addEventListener("click", () => {
+                    showQuestion(index);
+                });
+                navDiv.appendChild(box);
+            });
+        }
+
+        // Carica il quiz
+        function loadQuiz() {
+            const quizDiv = document.getElementById("quiz");
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement("div");
+                questionDiv.classList.add("question");
+                questionDiv.id = `question-${index}`;
+                questionDiv.innerHTML = `
+                    <h3>${index + 1}. ${q.question}</h3>
+                    ${q.options.map((opt, i) => `
+                        <div class="option" data-value="${opt}">
+                            <input type="radio" name="q${index}" value="${opt}" id="q${index}_${i}">
+                            <label for="q${index}_${i}">${opt}</label>
+                            <span class="lamp" id="lamp-${index}-${i}">💡</span>
+                        </div>
+                    `).join("")}
+                    <div class="explanation" id="exp-${index}">${q.explanation}</div>
+                `;
+                quizDiv.appendChild(questionDiv);
+
+                // Aggiungi evento per accendere il quadratino
+                const radios = questionDiv.querySelectorAll(`input[name="q${index}"]`);
+                radios.forEach(radio => {
+                    radio.addEventListener("change", () => {
+                        document.querySelectorAll(".question-box")[index].classList.add("answered");
+                    });
+                });
+            });
+            showQuestion(0); // Mostra la prima domanda
+        }
+
+        // Mostra la domanda corrente
+        function showQuestion(index) {
+            document.querySelectorAll(".question").forEach(q => q.classList.remove("active"));
+            document.getElementById(`question-${index}`).classList.add("active");
+            currentQuestion = index;
+
+            // Gestione stato pulsanti
+            document.getElementById("prev").disabled = currentQuestion === 0;
+            document.getElementById("next").disabled = currentQuestion === questions.length - 1;
+        }
+
+        // Timer (30 minuti)
+        let timeLeft = 30 * 60;
+        function startTimer() {
+            const timer = setInterval(() => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                document.getElementById("time").textContent = 
+                    `${minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    checkAnswers();
+                }
+            }, 1000);
+        }
+
+        // Controllo risposte e feedback visivo
+        function checkAnswers() {
+            let score = 0;
+            questions.forEach((q, index) => {
+                const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                const options = document.querySelectorAll(`#question-${index} .option`);
+
+                options.forEach(option => {
+                    const value = option.getAttribute("data-value");
+                    if (value === q.correct) {
+                        option.classList.add("correct");
+                        const lamp = option.querySelector(".lamp");
+                        lamp.style.display = "inline";
+                        lamp.addEventListener("click", () => {
+                            const explanation = document.getElementById(`exp-${index}`);
+                            explanation.style.display = "block";
+                        });
+                    }
+                });
+
+                if (selected) {
+                    if (selected.value === q.correct) {
+                        score++;
+                    } else {
+                        selected.parentElement.classList.add("wrong");
+                    }
+                }
+            });
+
+            const resultDiv = document.getElementById("result");
+            resultDiv.textContent = `Punteggio: ${score} / ${questions.length}`;
+            document.getElementById("submit").disabled = true;
+            document.getElementById("prev").disabled = true;
+            document.getElementById("next").disabled = true;
+
+            // Disabilita i radio button dopo l'invio
+            document.querySelectorAll("input[type=radio]").forEach(radio => {
+                radio.disabled = true;
+            });
+        }
+
+        // Inizializzazione
+        window.onload = () => {
+            loadQuestionNav();
+            loadQuiz();
+            startTimer();
+
+            document.getElementById("prev").addEventListener("click", () => {
+                if (currentQuestion > 0) showQuestion(currentQuestion - 1);
+            });
+
+            document.getElementById("next").addEventListener("click", () => {
+                if (currentQuestion < questions.length - 1) showQuestion(currentQuestion + 1);
+            });
+
+            document.getElementById("submit").addEventListener("click", checkAnswers);
+        };
+    </script>
+</body>
+</html>
